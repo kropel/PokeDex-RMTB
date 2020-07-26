@@ -16,10 +16,11 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {fetchData} from './services/apiService';
 import ListHeaderComponent from './components/ListHeaderComponent';
 import {useDebounce} from './hooks/useDebounce';
+import {useAsyncStorage} from './hooks/useAsyncStorage';
 
 const App = () => {
-  const [pokemonsList, setPokemonsList] = useState([]);
-  const [pokemons, setPokemons] = useState(pokemonsList);
+  const [pokemonsList, setPokemonsList] = useAsyncStorage('@pokeDexList'); //orginalana list pobrana z serwera
+  const [pokemons, setPokemons] = useState(pokemonsList); // lista filtrowana, bazująca na pokemonsList
   const [searchTerm, setSearchTerm] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -27,24 +28,16 @@ const App = () => {
 
   useEffect(() => {
     (async () => {
-      try {
-        const list = await AsyncStorage.getItem('@pokeDexList');
-        let value = null;
+      const list = await AsyncStorage.getItem('@pokeDexList');
+      let value = null;
 
-        if (list == null) {
-          value = await fetchData();
-
-          const stringifiedValue = JSON.stringify(value);
-          await AsyncStorage.setItem('@pokeDexList', stringifiedValue);
-        } else {
-          value = JSON.parse(list);
-        }
-
-        setPokemonsList(value);
-        setPokemons(value);
-      } catch (err) {
-        console.log(err);
+      if (list == null) {
+        value = await fetchData();
+      } else {
+        value = list;
       }
+      setPokemonsList(value);
+      setPokemons(value);
     })();
   }, []);
 
@@ -74,7 +67,6 @@ const App = () => {
     setIsRefreshing(true);
     try {
       const list = await fetchData();
-      await AsyncStorage.setItem('@pokeDexList', JSON.stringify(list));
       setPokemons(list);
       setPokemonsList(list);
     } catch (err) {
