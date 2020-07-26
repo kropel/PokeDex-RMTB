@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -11,30 +11,93 @@ import {
   FlatList,
   Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
-import {fetchData} from './components/apiService';
+import {fetchData} from './services/apiService';
+import ListHeaderComponent from './components/ListHeaderComponent';
+import {useDebounce} from './hooks/useDebounce';
 
 const App = () => {
   const [pokemonsList, setPokemonsList] = useState([]);
+  const [pokemons, setPokemons] = useState(pokemonsList);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   const barStyle = Platform.OS === 'ios' ? 'dark-content' : 'light-content';
 
   useEffect(() => {
-    const getData = async () => {
-      const data = await fetchData();
-      setPokemonsList(data);
-    };
-    getData();
+    (async () => {
+      try {
+        const list = await AsyncStorage.getItem('@pokeDexList');
+        let value = null;
+
+        if (list == null) {
+          value = await fetchData();
+
+          const stringifiedValue = JSON.stringify(value);
+          await AsyncStorage.setItem('@pokeDexList', stringifiedValue);
+        } else {
+          value = JSON.parse(list);
+        }
+
+        setPokemonsList(value);
+        setPokemons(value);
+      } catch (err) {
+        console.log(err);
+      }
+    })();
   }, []);
+
+  const debounceSearchTerm = useDebounce(searchTerm, 200);
+
+  const filterPokemons = useCallback(
+    (term) => {
+      return pokemonsList.filter((item) =>
+        item.name.toLowerCase().includes(term.toLowerCase()),
+      );
+    },
+    [pokemonsList],
+  );
+
+  useEffect(() => {
+    let filtredPokemons = [];
+    if (debounceSearchTerm) {
+      filtredPokemons = filterPokemons(debounceSearchTerm);
+    } else {
+      filtredPokemons = pokemonsList;
+    }
+
+    setPokemons(filtredPokemons);
+  }, [debounceSearchTerm, searchTerm, pokemonsList]);
+
+  const refreshPokemonsList = async () => {
+    setIsRefreshing(true);
+    try {
+      const list = await fetchData();
+      await AsyncStorage.setItem('@pokeDexList', JSON.stringify(list));
+      setPokemons(list);
+      setPokemonsList(list);
+    } catch (err) {
+      console.log(err);
+    }
+    setIsRefreshing(false);
+  };
 
   return (
     <React.Fragment>
       <StatusBar barStyle={barStyle} backgroundColor="black" />
       <SafeAreaView style={styles.container}>
         <FlatList
-          data={pokemonsList}
+          refreshing={isRefreshing}
+          onRefresh={refreshPokemonsList}
+          ListHeaderComponent={
+            <ListHeaderComponent onChangeText={setSearchTerm} />
+          }
+          keyExtractor={(item, index) => item.name + index}
+          data={pokemons}
           renderItem={({item, index}) => (
             <TouchableOpacity
-              key={item.name + index}
+              key={index}
               style={styles.button}
               onPress={() => {
                 Alert.alert(item.name);
