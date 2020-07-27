@@ -11,7 +11,7 @@ import {
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
+import 'abortcontroller-polyfill';
 
 import {fetchPokemonDetails} from '../apiService';
 import {useAsyncStorage} from '../hooks/useAsyncStorage';
@@ -25,9 +25,9 @@ export const ListItem = props => {
     `@pokeDex_details_${props.name}`,
   );
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
     (async () => {
-      const controller = new AbortController();
-      const signal = controller.signal;
       setIsLoading(true);
       const pokemonDetails = await AsyncStorage.getItem(
         `@pokeDex_details_${props.name}`,
@@ -38,9 +38,8 @@ export const ListItem = props => {
       }
       setDetails(detailsSource);
       setIsLoading(false);
-
-      return () => controller.abort();
     })();
+    return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detailsSource]);
 

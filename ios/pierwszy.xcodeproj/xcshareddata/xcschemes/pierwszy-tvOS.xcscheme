@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-               BuildableName = "PokeDex-tvOS.app"
-               BlueprintName = "PokeDex-tvOS"
-               ReferencedContainer = "container:PokeDex.xcodeproj">
+               BuildableName = "pierwszy-tvOS.app"
+               BlueprintName = "pierwszy-tvOS"
+               ReferencedContainer = "container:pierwszy.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
-               BuildableName = "PokeDex-tvOSTests.xctest"
-               BlueprintName = "PokeDex-tvOSTests"
-               ReferencedContainer = "container:PokeDex.xcodeproj">
+               BuildableName = "pierwszy-tvOSTests.xctest"
+               BlueprintName = "pierwszy-tvOSTests"
+               ReferencedContainer = "container:pierwszy.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "PokeDex-tvOS.app"
-            BlueprintName = "PokeDex-tvOS"
-            ReferencedContainer = "container:PokeDex.xcodeproj">
+            BuildableName = "pierwszy-tvOS.app"
+            BlueprintName = "pierwszy-tvOS"
+            ReferencedContainer = "container:pierwszy.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "PokeDex-tvOS.app"
-            BlueprintName = "PokeDex-tvOS"
-            ReferencedContainer = "container:PokeDex.xcodeproj">
+            BuildableName = "pierwszy-tvOS.app"
+            BlueprintName = "pierwszy-tvOS"
+            ReferencedContainer = "container:pierwszy.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
